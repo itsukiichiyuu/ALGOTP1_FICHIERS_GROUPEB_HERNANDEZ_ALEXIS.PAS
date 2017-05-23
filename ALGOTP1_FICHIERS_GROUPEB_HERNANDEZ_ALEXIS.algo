@@ -1,0 +1,191 @@
+programme fichier_conjugue
+
+//---------------------------------------------------------------------------------------------
+
+PROCEDURE CreaFichier(fichier:text; nbverbe:ENTIER)
+
+i:ENTIER
+	verbes,verbeSeul:CHAINE
+
+DEBUT
+	nbverbe<-0
+	verbes<- "RIRE/RECEVOIR/ALLER/BOUILLIR/ENVOYER/PEINDRE/HABITER/PAYER/MOURIR/HAIR/VOULOIR/FINIR/S''AMUSER/"
+	verbeSeul<-""
+
+	ASSIGNER(fichier,"liste_verbes.txt")
+	ECRIRE(fichier)
+
+	POUR i<-1 to LONGUEUR(verbes) FAIRE
+	DEBUT
+		SI verbes[i]<>"/" ALORS
+			verbeSeul<-verbeSeul + verbes[i]
+		SINON
+			ECRIRE(fichier,verbeSeul)
+			verbeseul<-""
+			nbverbe<-nbverbe+1
+		FINSI
+		
+	FINPOUR
+
+	FERMER(fichier)
+
+FINPROCEDURE
+
+//---------------------------------------------------------------------------------------------
+
+PROCEDURE AfficheVerbe( fichier:text)
+var
+	mot:CHAINE
+DEBUT
+	ASSIGNER(fichier,"liste_verbes.txt")
+	LECTURE(fichier)
+	mot<-""
+	TANSQUE NON FIN(fichier) FAIRE
+
+		LIRE(fichier,mot)
+		ECRIRE(mot)
+		mot<-""
+
+	FINTANSQUE
+	FERMER(fichier)
+FINPROCEDURE
+
+//---------------------------------------------------------------------------------------------
+
+FONCTION TestVerb1(nom:CHAINE; termi:CHAINE):BOOLEEN
+
+DEBUT
+	SI (termi="ER") ET (nom <>"ALLER") ALORS
+		TestVerb1<-VRAI
+	SINON
+		TestVerb1<-FAUX
+	FINSI
+FINFONCTION
+
+//---------------------------------------------------------------------------------------------
+
+FONCTION TestVerb2(nom:CHAINE; termi:CHAINE; radi:CHAINE):BOOLEEN
+
+DEBUT
+	SI (termi="IR") ET (nom <>"FINIR") ET (nom <>"PARTIR") ET (nom <>"BOUILLIR") ET (nom <>"MOURIR") 
+	ET (radi[LONGUEUR(radi)]<>"O") ALORS
+		TestVerb2<-VRAI
+	SINON
+		TestVerb2<-FAUX
+	FINSI
+FINFONCTION
+
+//---------------------------------------------------------------------------------------------
+
+FONCTION TrouveGroupe(mot:CHAINE; radi:CHAINE):CHAINE
+var
+i:ENTIER
+termi,grp: CHAINE
+
+DEBUT
+
+	radi<-""
+	POUR i<-0 A LONGUEUR(nom)-2
+		radi<-radi+nom[i]
+	FINPOUR
+
+	POUR i<-LONGUEUR(nom-2) A LONGUEUR(nom) FAIRE
+		termi<-termi+nom[i]
+	FINPOUR
+
+	SI TestVerb1(nom,termi)=VRAI ALORS
+		grp<-"1"
+	FINSI
+
+	SI TestVerb2(nom,termi)=VRAI ALORS
+		grp<-"2"
+	FINSI
+
+	SI grp='' ALORS
+		grp<-"3"
+	FINSI
+
+TrouveGroupe<-grp
+FINFONCTION
+
+//---------------------------------------------------------------------------------------------
+
+{PROCEDURE Conjugue(mot:CHAINE; radi:CHAINE)
+
+
+je n'ai pas eu le temps d'en faire plus ni de commenter , j'ai perdu 1h30 sur des problèmes avec pascal
+
+
+FINPROCEDURE}
+
+//---------------------------------------------------------------------------------------------
+
+var
+	rep,rep2,radi:CHAINE
+	fichier:text
+	nbverbe,sortie:ENTIER
+DEBUT
+
+rep<-""
+rep2<-""
+
+CreaFichier(fichier,nbverbe)
+
+REPETER
+	ECRIRE("pour lire la liste des verbes appuyez sur 1")
+	ECRIRE("pour trouver le groupe d''un verbe de la liste tapez 2")
+	ECRIRE("pour conjuguer un verbe de la liste tapez 3")
+	ECRIRE("pour quitter appuyez sur 0")
+
+	REPETER
+
+		LIRE(rep)
+
+	JUSQUA (rep="1") OU (rep="2") OU (rep="0")
+
+
+	CAS rep PARMIS
+
+		1:AfficheVerbe(fichier)
+
+		2:AfficheVerbe(fichier)
+		  sortie<-0
+		  ECRIRE "quel verbe dans la liste ?"
+
+		  REPETER
+			  LIRE (rep)
+
+			  	TANSQUE NON FIN(fichier) FAIRE
+			  		LIRE (fichier,mot)
+			  		SI rep= fichier(mot) ALORS
+			  			sortie<-1
+			  		FINSI
+			  	FINTANSQUE
+			  	SI sortie=0 ALORS
+			  		ECRIRE ("le mot n'est pas dans la liste")
+			  	FINSI
+		  JUSQUA sortie= 1
+
+		  ECRIRE ("le groupe du mot que vous avez tapé est le numéro " & TrouveGroupe(mot,radi))
+
+		  REPETER
+		  	ECRIRE ("voulez-vous le conjuguer ?")
+		  	ECRIRE ("oui =1 / non =2")
+		  	LIRE (rep2)
+		  JUSQUA (rep2="1") OU (rep2="2")
+
+		  SI rep2="1" ALORS
+		  	Conjugue(mot,radi)
+		  FINSI
+
+	FINCASPARMIS
+
+	ECRIRE ("pour continuer appuyez sur entrer")
+	LIRE() //vide
+
+JUSQUA rep="0";
+
+
+FIN.
+
+//---------------------------------------------------------------------------------------------
